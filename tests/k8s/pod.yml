@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mount-host
+  namespace: playground
+spec:
+  containers:
+    - name: mount-host
+      image: alpine
+      command: ["sleep"]
+      args: ["infinity"]
+      volumeMounts:
+        - name: host-root
+          mountPath: /host
+          readOnly: true
+  volumes:
+    - name: host-root
+      hostPath:
+        path: /
+        type: Directory
