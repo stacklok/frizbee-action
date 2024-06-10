@@ -1,0 +1,16 @@
+name: "Frizbee Action"
+description: "Automatically correct Action and Dockerfile tags to digests"
+author: "Stacklok, Inc."
+branding:
+  icon: "at-sign"
+  color: "green"
+inputs:
+  GITHUB_TOKEN:
+    description: "GitHub token"
+    required: true
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.recursive }}
