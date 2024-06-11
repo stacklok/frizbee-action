@@ -19,6 +19,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/go-git/go-billy/v5"
+	"github.com/go-git/go-billy/v5/memfs"
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing/transport/http"
+	"github.com/go-git/go-git/v5/storage/memory"
 	"github.com/google/go-github/v60/github"
 	"github.com/stacklok/frizbee-action/pkg/action"
 	"github.com/stacklok/frizbee/pkg/replacer"
@@ -73,9 +78,16 @@ func initAction(ctx context.Context) (*action.FrizbeeAction, error) {
 		return nil, fmt.Errorf("GITHUB_REPOSITORY environment variable is not set")
 	}
 
+	// Clone the repository
+	fs, repo, err := cloneRepository(fmt.Sprintf("https://github.com/%s", repoFullName), repoOwner, token)
+	if err != nil {
+		return nil, fmt.Errorf("failed to clone repository: %w", err)
+	}
+
 	// Read the action settings from the environment and create the new frizbee replacers for actions and images
 	return &action.FrizbeeAction{
 		Client:            github.NewClient(tc),
+		Token:             token,
 		RepoOwner:         repoOwner,
 		RepoName:          strings.TrimPrefix(repoFullName, repoOwner+"/"),
 		ActionsPath:       os.Getenv("INPUT_ACTIONS"),
@@ -86,5 +98,25 @@ func initAction(ctx context.Context) (*action.FrizbeeAction, error) {
 		FailOnUnpinned:    os.Getenv("INPUT_FAIL_ON_UNPINNED") == "true",
 		ActionsReplacer:   replacer.NewGitHubActionsReplacer(&config.Config{}).WithGitHubClientFromToken(token),
 		ImagesReplacer:    replacer.NewContainerImagesReplacer(&config.Config{}),
+		BFS:               fs,
+		Repo:              repo,
 	}, nil
+}
+
+// cloneRepository clones the repository and returns a billy.Filesystem interface to interact with it
+func cloneRepository(url, owner, accessToken string) (billy.Filesystem, *git.Repository, error) {
+	fs := memfs.New()
+	// Use memory storage to clone the repository in memory
+	store := memory.NewStorage()
+	repo, err := git.Clone(store, fs, &git.CloneOptions{
+		URL: url,
+		Auth: &http.BasicAuth{
+			Username: owner,
+			Password: accessToken,
+		},
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+	return fs, repo, nil
 }
