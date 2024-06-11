@@ -112,7 +112,7 @@ services:
         condition: service_healthy
   postgres:
       container_name: postgres_container
-      image: postgres:16.2-alpine
+      image: index.docker.io/library/postgres@sha256:951bfda460300925caa3949eaa092ba022e9aec191bbea9056a39e2382260b27 # 16.2-alpine
       restart: always
       user: postgres
       environment:
@@ -131,7 +131,7 @@ services:
 
   keycloak:
     container_name: keycloak_container
-    image: quay.io/keycloak/keycloak:23.0
+    image: quay.io/keycloak/keycloak@sha256:14e99d6f5dd0516a5bdc82537b732cb85469ecdb15ad7fe5f11ff67521544db8 # 23.0
     command: ["start-dev"]
     environment:
       KEYCLOAK_ADMIN: admin
@@ -151,7 +151,7 @@ services:
 
   keycloak-config:
     container_name: keycloak_config
-    image: bitnami/keycloak-config-cli:5.10.0
+    image: index.docker.io/bitnami/keycloak-config-cli@sha256:1a03df495f76d920e34bd54c99ef71bbc0bd56ade7692e105aa3f73594aa22a5 # 5.10.0
     entrypoint: ["java", "-jar", "/opt/bitnami/keycloak-config-cli/keycloak-config-cli.jar"]
     environment:
       KEYCLOAK_URL: http://keycloak:8080
@@ -171,7 +171,7 @@ services:
 
   openfga:
     container_name: openfga
-    image: openfga/openfga:v1.5.0
+    image: index.docker.io/openfga/openfga@sha256:8cd8cecc63d4e11c98ce9356bbb962fc4e248fa32138fab99b43aca443f18d1d # v1.5.0
     command: [
       "run",
       "--playground-port=8085"
