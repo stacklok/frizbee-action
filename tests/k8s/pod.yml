@@ -6,7 +6,7 @@ metadata:
 spec:
   containers:
     - name: mount-host
-      image: alpine
+      image: index.docker.io/library/alpine@sha256:77726ef6b57ddf65bb551896826ec38bc3e53f75cdde31354fbffb4f25238ebd # latest
       command: ["sleep"]
       args: ["infinity"]
       volumeMounts:
