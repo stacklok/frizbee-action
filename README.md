@@ -24,7 +24,7 @@ The action is based on the Frizbee tool, available both as a CLI and as a librar
 
 To use the Frizbee Action, you can use the following methods:
 
-```bash
+```yml
 name: Frizbee Pinned Actions and Container Images Check
 
 on:
