@@ -40,7 +40,7 @@ jobs:
         uses: actions/checkout@v4
       - uses: stacklok/frizbee-action@v0.0.1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.FRIZBEE_TOKEN }}
         with:
           actions: .github/workflows
           dockerfiles: ./docker
@@ -49,6 +49,47 @@ jobs:
           open_pr: true
           fail_on_unpinned: true
 ```
+
+### Create a token
+
+The default `GITHUB_TOKEN` doesn't have the necessary permissions (`workflows`).
+
+In case you want to use the `open_pr` feature, so you will need to create a
+new token with the correct scope, add it as a secret and pass it to the action
+through the `GITHUB_TOKEN` environment variable.
+
+To enable the action to create a pull request, you will need to create a new token with the correct scope.
+
+To do so, go to your GitHub account, then `Settings` -> `Developer settings` -> `Personal access tokens` -> `Fine-grained tokens` -> `Generate new token`.
+
+Name the Token as `FRIZBEE_TOKEN` and give it a description and an expiration date.
+
+You can then assign access to All repositories or only to specific repositories.
+
+Should you select specific repositories, you will need to add the repository
+where you are using the action.
+
+Make sure the following scopes are assigned:
+
+* The `workflows` scope and provide read and write access.
+* The `contents` scope and provide read and write access.
+* The `pull_requests` scope and provide read and write access.
+
+### Set up the Secret
+
+Head to the repository where you are using the action, then `Settings` -> `Secrets and variables` -> `Actions` -> `New repository secret`.
+
+Name the secret `FRIZBEE_TOKEN` and paste the token you created in the previous
+step and select `Add secret`.
+
+#### I don't have time for that
+
+If you prefer to automate all of this, we recommend trying out [Minder cloud](https://cloud.stacklok.com),
+a free for Open Source SaaS solution built on the open source project Minder. This
+way you can easily automate the process of pinning your actions and container
+images. You can also do a lot more than that, like monitoring your dependencies,
+scanning your code for vulnerabilities, and securing configuring your
+repositories and GitHub Actions.
 
 ## Configuration
 
@@ -80,12 +121,6 @@ The Frizbee Action can be configured through the following inputs:
     required: false
     default: "false"
 ```
-
-### Limitations
-
-The default `GITHUB_TOKEN` doesn't have the necessary permissions (`workflows`) to open a PR. 
-In case you want to use the `open_pr` feature, you will need to create a new token with the correct scope, add it as a secret
-and pass it to the action through the `GITHUB_TOKEN` environment variable.
 
 ## Contributing
 
