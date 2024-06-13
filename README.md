@@ -84,8 +84,7 @@ step and select `Add secret`.
 
 #### I don't have time for that
 
-If you prefer to automate all of this, we recommend trying out [Minder cloud](https://cloud.stacklok.com),
-a free for Open Source SaaS solution built on the open source project Minder. This
+If you prefer to automate all of this, we recommend trying out [Minder cloud](https://cloud.stacklok.com), a free for Open Source SaaS solution built on the open source project Minder. This
 way you can easily automate the process of pinning your actions and container
 images. You can also do a lot more than that, like monitoring your dependencies,
 scanning your code for vulnerabilities, and securing configuring your
