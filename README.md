@@ -52,13 +52,7 @@ jobs:
 
 ### Create a token
 
-The default `GITHUB_TOKEN` doesn't have the necessary permissions (`workflows`).
-
-In case you want to use the `open_pr` feature, so you will need to create a
-new token with the correct scope, add it as a secret and pass it to the action
-through the `GITHUB_TOKEN` environment variable.
-
-To enable the action to create a pull request, you will need to create a new token with the correct scope.
+To enable the action to create a pull request (`open_pr: true`) , you will need to create a new token with the correct scope. This is needed because the default `GITHUB_TOKEN` doesn't have the necessary permissions (`workflows`).
 
 To do so, go to your GitHub account, then `Settings` -> `Developer settings` -> `Personal access tokens` -> `Fine-grained tokens` -> `Generate new token`.
 
