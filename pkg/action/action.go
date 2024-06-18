@@ -13,11 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package action provides the actual frizbee action
 package action
 
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+	"strings"
+	"time"
+
 	mapset "github.com/deckarep/golang-set/v2"
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-git/v5"
@@ -27,20 +33,7 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/google/go-github/v60/github"
 	"github.com/stacklok/frizbee/pkg/replacer"
-	"log"
-	"os"
-	"time"
 )
-
-var prBody = `
-The following PR pins images and actions to their commit hash.
-
-Pinning images and actions to their commit hash ensures that the same version of the image or action is used every time the workflow runs. This is important for reproducibility and security.
-
-Pinning is a [security practice recommended by GitHub](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-third-party-actions).
-
-> 🌟 If you like this action, why not try out [Minder](https://github.com/stacklok/minder), the secure supply chain platform. It has vastly more protections and is also free (as in :beer:) to opensource projects.
-`
 
 // FrizbeeAction is the main struct for the frizbee action
 type FrizbeeAction struct {
@@ -60,6 +53,7 @@ type FrizbeeAction struct {
 	ImagesReplacer  *replacer.Replacer
 	BFS             billy.Filesystem
 	Repo            *git.Repository
+	bodyBuilder     *strings.Builder
 }
 
 // Run runs the frizbee action
@@ -228,7 +222,8 @@ func (fa *FrizbeeAction) createPR(ctx context.Context) error {
 		}
 	}
 
-	if existingPR != nil && existingPR.GetState() == "closed" && branchExists(ctx, fa.Client, fa.RepoOwner, fa.RepoName, branchName) {
+	if existingPR != nil && existingPR.GetState() == "closed" &&
+		branchExists(ctx, fa.Client, fa.RepoOwner, fa.RepoName, branchName) {
 		log.Printf("PR %d is closed. Won't do anything as long as branch %s exists", existingPR.GetNumber(), branchName)
 		return nil
 	}
@@ -258,10 +253,10 @@ func (fa *FrizbeeAction) createPR(ctx context.Context) error {
 		log.Fatalf("failed to push branch: %v", err)
 	}
 
-	fmt.Printf("Branch %s pushed successfully\n", branchName)
+	log.Printf("Branch %s pushed successfully\n", branchName)
 
 	if existingPR != nil && existingPR.GetState() == "open" {
-		fmt.Printf("PR %d already exists. Won't create a new one\n", existingPR.GetNumber())
+		log.Printf("PR %d already exists. Won't create a new one\n", existingPR.GetNumber())
 		return nil
 	}
 	// either the PR doesn't exist or was merged and it's time for another one
@@ -273,10 +268,20 @@ func (fa *FrizbeeAction) createPR(ctx context.Context) error {
 	}
 	defaultBranch := repository.GetDefaultBranch()
 
+	fa.bodyBuilder = &strings.Builder{}
+	fa.bodyBuilder.WriteString("The following PR pins images and actions to their commit hash.\n\n")
+	fa.bodyBuilder.WriteString("Pinning images and actions to their commit hash ensures that the same " +
+		"version of the image or action is used every time the workflow runs. This is important for " +
+		"reproducibility and security.\n\n")
+	//nolint:lll
+	fa.bodyBuilder.WriteString("Pinning is a [security practice recommended by GitHub](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-third-party-actions).\n\n")
+	//nolint:lll
+	fa.bodyBuilder.WriteString("> 🌟 If you like this action, why not try out [Minder](https://github.com/stacklok/minder), the secure supply chain platform. It has vastly more protections and is also free (as in :beer:) to opensource projects.")
+
 	// Create a new PR
 	pr, _, err := fa.Client.PullRequests.Create(ctx, fa.RepoOwner, fa.RepoName, &github.NewPullRequest{
 		Title:               github.String("Frizbee: Pin images and actions to commit hash"),
-		Body:                github.String(prBody),
+		Body:                github.String(fa.bodyBuilder.String()),
 		Head:                github.String(branchName),
 		Base:                github.String(defaultBranch),
 		MaintainerCanModify: github.Bool(true),
@@ -284,7 +289,7 @@ func (fa *FrizbeeAction) createPR(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("PR %d created successfully\n", pr.GetNumber())
+	log.Printf("PR %d created successfully\n", pr.GetNumber())
 	return nil
 }
 
