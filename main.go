@@ -96,8 +96,8 @@ func initAction(ctx context.Context) (*action.FrizbeeAction, error) {
 		DockerComposePath: os.Getenv("INPUT_DOCKER_COMPOSE"),
 		OpenPR:            os.Getenv("INPUT_OPEN_PR") == "true",
 		FailOnUnpinned:    os.Getenv("INPUT_FAIL_ON_UNPINNED") == "true",
-		ActionsReplacer:   replacer.NewGitHubActionsReplacer(&config.Config{}).WithGitHubClientFromToken(token),
-		ImagesReplacer:    replacer.NewContainerImagesReplacer(&config.Config{}),
+		ActionsReplacer:   replacer.NewGitHubActionsReplacer(config.DefaultConfig()).WithGitHubClientFromToken(token),
+		ImagesReplacer:    replacer.NewContainerImagesReplacer(config.DefaultConfig()),
 		BFS:               fs,
 		Repo:              repo,
 	}, nil
