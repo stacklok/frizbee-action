@@ -43,9 +43,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.FRIZBEE_TOKEN }}
         with:
           actions: .github/workflows
-          dockerfiles: ./docker
-          kubernetes: ./k8s
-          docker_compose: ./docker
+          dockerfiles: ["./Dockerfile", "./images"] # You can specify multiple files or directories
+          kubernetes: ["./k8s"]
+          docker_compose: ["./docker"]
           open_pr: true
           fail_on_unpinned: true
 ```

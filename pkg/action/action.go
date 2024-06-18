@@ -33,20 +33,22 @@ import (
 )
 
 type FrizbeeAction struct {
-	Client            *github.Client
-	Token             string
-	RepoOwner         string
-	RepoName          string
-	ActionsPath       string
-	DockerfilesPath   string
-	KubernetesPath    string
-	DockerComposePath string
-	OpenPR            bool
-	FailOnUnpinned    bool
-	ActionsReplacer   *replacer.Replacer
-	ImagesReplacer    *replacer.Replacer
-	BFS               billy.Filesystem
-	Repo              *git.Repository
+	Client    *github.Client
+	Token     string
+	RepoOwner string
+	RepoName  string
+
+	ActionsPath        string
+	DockerfilesPaths   []string
+	KubernetesPaths    []string
+	DockerComposePaths []string
+
+	OpenPR          bool
+	FailOnUnpinned  bool
+	ActionsReplacer *replacer.Replacer
+	ImagesReplacer  *replacer.Replacer
+	BFS             billy.Filesystem
+	Repo            *git.Repository
 }
 
 // Run runs the frizbee action
@@ -91,7 +93,11 @@ func (fa *FrizbeeAction) parseWorkflowActions(ctx context.Context, out *replacer
 
 // parseImages parses the Dockerfiles, Docker Compose, and Kubernetes files for container images.
 func (fa *FrizbeeAction) parseImages(ctx context.Context, out *replacer.ReplaceResult) error {
-	pathsToParse := []string{fa.DockerfilesPath, fa.DockerComposePath, fa.KubernetesPath}
+	pathsToParse := []string{}
+	pathsToParse = append(pathsToParse, fa.DockerfilesPaths...)
+	pathsToParse = append(pathsToParse, fa.DockerComposePaths...)
+	pathsToParse = append(pathsToParse, fa.KubernetesPaths...)
+
 	for _, path := range pathsToParse {
 		if path == "" {
 			continue
