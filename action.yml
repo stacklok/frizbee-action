@@ -12,7 +12,7 @@ inputs:
   dockerfiles:
     description: "Dockerfiles to correct"
     required: false
-    default: "Dockerfile"
+    default: '["Dockerfile"]'
   kubernetes:
     description: "Kubernetes manifests to correct"
     required: false
