@@ -205,28 +205,6 @@ func (fa *FrizbeeAction) commitChanges(path, content string) error {
 func (fa *FrizbeeAction) createPR(ctx context.Context) error {
 	// Create a new branch for the PR
 	branchName := "frizbee-action-patch"
-	var existingPR *github.PullRequest
-
-	// Check if a PR already exists for the branch and return if it does
-	openPrs, _, err := fa.Client.PullRequests.List(ctx, fa.RepoOwner, fa.RepoName, &github.PullRequestListOptions{
-		Head:  branchName,
-		State: "all",
-	})
-	if err != nil {
-		return err
-	}
-	for _, pr := range openPrs {
-		if pr.GetHead().GetRef() == branchName {
-			existingPR = pr
-			break
-		}
-	}
-
-	if existingPR != nil && existingPR.GetState() == "closed" &&
-		branchExists(ctx, fa.Client, fa.RepoOwner, fa.RepoName, branchName) {
-		log.Printf("PR %d is closed. Won't do anything as long as branch %s exists", existingPR.GetNumber(), branchName)
-		return nil
-	}
 
 	headRef, err := fa.Repo.Head()
 	if err != nil {
@@ -255,11 +233,21 @@ func (fa *FrizbeeAction) createPR(ctx context.Context) error {
 
 	log.Printf("Branch %s pushed successfully\n", branchName)
 
-	if existingPR != nil && existingPR.GetState() == "open" {
-		log.Printf("PR %d already exists. Won't create a new one\n", existingPR.GetNumber())
-		return nil
+	// Check if a PR already exists for the branch and return if it does
+	openPrs, _, err := fa.Client.PullRequests.List(ctx, fa.RepoOwner, fa.RepoName, &github.PullRequestListOptions{
+		Head:  branchName,
+		State: "open",
+	})
+	if err != nil {
+		log.Fatalf("failed to list PRs: %v", err)
 	}
-	// either the PR doesn't exist or was merged and it's time for another one
+
+	for _, pr := range openPrs {
+		if pr.GetHead().GetRef() == branchName {
+			log.Printf("PR %d already exists\n", pr.GetNumber())
+			return nil
+		}
+	}
 
 	// Get defaultBranch
 	repository, _, err := fa.Client.Repositories.Get(ctx, fa.RepoOwner, fa.RepoName)
@@ -291,9 +279,4 @@ func (fa *FrizbeeAction) createPR(ctx context.Context) error {
 	}
 	log.Printf("PR %d created successfully\n", pr.GetNumber())
 	return nil
-}
-
-func branchExists(ctx context.Context, cli *github.Client, owner, repo, branch string) bool {
-	_, _, err := cli.Repositories.GetBranch(ctx, owner, repo, branch, 64)
-	return err == nil
 }
