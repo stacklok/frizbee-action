@@ -162,11 +162,11 @@ We welcome contributions to Frizbee Action. Please see our [Contributing](./CONT
 
 ## Minder
 
-Frizbee is also part of the Minder project. [Minder](https://github.com/stacklok/mimder) is a free for Open Source
-SaaS solution built on the open source project Minder. It can enable you to easily
-automate the process of pinning your actions and container images. You can also
-do a lot more than that, like monitoring your dependencies, scanning your code
-for vulnerabilities, and securing configuring your repositories and GitHub Actions.
+Frizbee is also a feature of the [Minder](https://github.com/stacklok/mimder) Open Source project. 
+With Minder you can enable you to easily automate the process of pinning your
+actions and container images. You can also do a lot more than that, like monitoring
+your dependencies, scanning your code for vulnerabilities, and securing configuring
+your repositories and GitHub Actions.
 
 Stacklok hosts a free (forever to open source projects) SaaS service available at [Minder Cloud](https://cloud.stacklok.com). 
 
