@@ -32,6 +32,17 @@ import (
 	"time"
 )
 
+var prBody = `
+The following PR pins images and actions to their commit hash.
+
+Pinning images and actions to their commit hash ensures that the same version of the image or action is used every time the workflow runs. This is important for reproducibility and security.
+
+Pinning is a [security practice recommended by GitHub](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-third-party-actions).
+
+> 🌟 If you like this action, why not try out [Minder](https://github.com/stacklok/minder), the secure supply chain platform. It has vastly more protections and is also free (as in :beer:) to opensource projects.
+`
+
+// FrizbeeAction is the main struct for the frizbee action
 type FrizbeeAction struct {
 	Client    *github.Client
 	Token     string
@@ -258,7 +269,7 @@ func (fa *FrizbeeAction) createPR(ctx context.Context) error {
 	// Create a new PR
 	pr, _, err := fa.Client.PullRequests.Create(ctx, fa.RepoOwner, fa.RepoName, &github.NewPullRequest{
 		Title:               github.String("Frizbee: Pin images and actions to commit hash"),
-		Body:                github.String("The following PR pins images and actions to their commit hash"),
+		Body:                github.String(prBody),
 		Head:                github.String(branchName),
 		Base:                github.String("main"),
 		MaintainerCanModify: github.Bool(true),
