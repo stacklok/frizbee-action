@@ -26,9 +26,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           actions: tests/workflows
-          dockerfiles: tests/dockerfiles
-          kubernetes: tests/k8s
-          docker_compose: tests/docker_compose
+          dockerfiles: '["tests/dockerfiles"]'
+          kubernetes: '["tests/k8s"]'
+          docker_compose: '["tests/docker_compose"]'
           open_pr: true
           fail_on_unpinned: true
   test_pr_and_fail_again:
@@ -41,9 +41,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           actions: tests/workflows
-          dockerfiles: tests/dockerfiles
-          kubernetes: tests/k8s
-          docker_compose: tests/docker_compose
+          dockerfiles: '["tests/dockerfiles"]'
+          kubernetes: '["tests/k8s"]'
+          docker_compose: '["tests/docker_compose"]'
           open_pr: true
           fail_on_unpinned: true
   test_no_pr_and_fail:
@@ -56,9 +56,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           actions: tests/workflows
-          dockerfiles: tests/dockerfiles
-          kubernetes: tests/k8s
-          docker_compose: tests/docker_compose
+          dockerfiles: '["tests/dockerfiles"]'
+          kubernetes: '["tests/k8s"]'
+          docker_compose: '["tests/docker_compose"]'
           open_pr: false
           fail_on_unpinned: true
   test_no_pr_and_no_fail:
@@ -71,9 +71,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           actions: tests/workflows
-          dockerfiles: tests/dockerfiles
-          kubernetes: tests/k8s
-          docker_compose: tests/docker_compose
+          dockerfiles: '["tests/dockerfiles"]'
+          kubernetes: '["tests/k8s"]'
+          docker_compose: '["tests/docker_compose"]'
           open_pr: false
           fail_on_unpinned: false
   test_no_pr_and_no_fail_no_actions:
@@ -86,9 +86,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           actions: ""
-          dockerfiles: "."
-          kubernetes: ""
-          docker_compose: ""
+          dockerfiles: '["."]'
+          kubernetes: '[""]'
+          docker_compose: '[""]'
           open_pr: false
           fail_on_unpinned: false
   test_no_pr_and_no_fail_default:
@@ -112,8 +112,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           actions: ""
-          dockerfiles: "."
-          kubernetes: "."
-          docker_compose: "."
+          dockerfiles: '["."]'
+          kubernetes: '["."]'
+          docker_compose: '["."]'
           open_pr: false
           fail_on_unpinned: false
