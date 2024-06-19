@@ -160,6 +160,16 @@ The Frizbee Action can be configured through the following inputs:
 
 We welcome contributions to Frizbee Action. Please see our [Contributing](./CONTRIBUTING.md) guide for more information.
 
+## Minder
+
+Frizbee is also part of the Minder project. [Minder](https://github.com/stacklok/mimder) is a free for Open Source
+SaaS solution built on the open source project Minder. It can enable you to easily
+automate the process of pinning your actions and container images. You can also
+do a lot more than that, like monitoring your dependencies, scanning your code
+for vulnerabilities, and securing configuring your repositories and GitHub Actions.
+
+Stacklok hosts a free (forever to open source projects) SaaS service available at [Minder Cloud](https://cloud.stacklok.com). 
+
 ## License
 
 Frizbee is licensed under the [Apache 2.0 License](./LICENSE).

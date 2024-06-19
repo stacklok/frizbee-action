@@ -29,6 +29,8 @@ import (
 	"github.com/stacklok/frizbee/pkg/replacer"
 	"log"
 	"os"
+	"res"
+	"strings"
 	"time"
 )
 
@@ -49,6 +51,7 @@ type FrizbeeAction struct {
 	ImagesReplacer  *replacer.Replacer
 	BFS             billy.Filesystem
 	Repo            *git.Repository
+	BodyBuilder     *strings.Builder
 }
 
 // Run runs the frizbee action
@@ -262,10 +265,17 @@ func (fa *FrizbeeAction) createPR(ctx context.Context) error {
 	}
 	defaultBranch := repository.GetDefaultBranch()
 
+	// Create the body of the PR
+	// bodyBuilder := strings.Builder{}
+	fa.BodyBuilder.WriteString("The following PR pins images and actions to their commit hash\n\n")
+	fa.BodyBuilder.WriteString("\n\n")
+	fa.BodyBuilder.WriteString("This PR was created by the [Frizbee GitHub Action](https://github.com/stacklok/frizbee-action)\n")
+	fa.BodyBuilder.WriteString("> 🌟 Brought to you by the developers of [Minder](https://github.com/stacklok/minder), a free (as in :beer:) open source security service.\n")
+
 	// Create a new PR
 	pr, _, err := fa.Client.PullRequests.Create(ctx, fa.RepoOwner, fa.RepoName, &github.NewPullRequest{
 		Title:               github.String("Frizbee: Pin images and actions to commit hash"),
-		Body:                github.String("The following PR pins images and actions to their commit hash"),
+		Body:                github.String(fa.BodyBuilder.String()),
 		Head:                github.String(branchName),
 		Base:                github.String(defaultBranch),
 		MaintainerCanModify: github.Bool(true),
