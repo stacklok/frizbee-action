@@ -255,12 +255,19 @@ func (fa *FrizbeeAction) createPR(ctx context.Context) error {
 	}
 	// either the PR doesn't exist or was merged and it's time for another one
 
+	// Get defaultBranch
+	repository, _, err := fa.Client.Repositories.Get(ctx, fa.RepoOwner, fa.RepoName)
+	if err != nil {
+		log.Fatalf("Error getting repository details: %v", err)
+	}
+	defaultBranch := repository.GetDefaultBranch()
+
 	// Create a new PR
 	pr, _, err := fa.Client.PullRequests.Create(ctx, fa.RepoOwner, fa.RepoName, &github.NewPullRequest{
 		Title:               github.String("Frizbee: Pin images and actions to commit hash"),
 		Body:                github.String("The following PR pins images and actions to their commit hash"),
 		Head:                github.String(branchName),
-		Base:                github.String("main"),
+		Base:                github.String(defaultBranch),
 		MaintainerCanModify: github.Bool(true),
 	})
 	if err != nil {
