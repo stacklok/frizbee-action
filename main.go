@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package main provides the entrypoint for the frizbee action
 package main
 
 import (
@@ -20,20 +21,21 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
+	"os"
+	"strings"
+
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/storage/memory"
 	"github.com/google/go-github/v60/github"
-	"github.com/stacklok/frizbee-action/pkg/action"
 	"github.com/stacklok/frizbee/pkg/replacer"
 	"github.com/stacklok/frizbee/pkg/utils/config"
-
 	"golang.org/x/oauth2"
-	"log"
-	"os"
-	"strings"
+
+	"github.com/stacklok/frizbee-action/pkg/action"
 )
 
 func main() {
@@ -60,7 +62,7 @@ func initAction(ctx context.Context) (*action.FrizbeeAction, error) {
 	// Get the GitHub token from the environment
 	token := os.Getenv("GITHUB_TOKEN")
 	if token == "" {
-		return nil, fmt.Errorf("GITHUB_TOKEN environment variable is not set")
+		return nil, errors.New("GITHUB_TOKEN environment variable is not set")
 	}
 
 	// Create a new GitHub client
@@ -70,17 +72,17 @@ func initAction(ctx context.Context) (*action.FrizbeeAction, error) {
 	// Get the GITHUB_REPOSITORY_OWNER
 	repoOwner := os.Getenv("GITHUB_REPOSITORY_OWNER")
 	if repoOwner == "" {
-		return nil, fmt.Errorf("GITHUB_REPOSITORY_OWNER environment variable is not set")
+		return nil, errors.New("GITHUB_REPOSITORY_OWNER environment variable is not set")
 	}
 
 	// Split the GITHUB_REPOSITORY environment variable to get repo name
 	repoFullName := os.Getenv("GITHUB_REPOSITORY")
 	if repoFullName == "" {
-		return nil, fmt.Errorf("GITHUB_REPOSITORY environment variable is not set")
+		return nil, errors.New("GITHUB_REPOSITORY environment variable is not set")
 	}
 
 	// Clone the repository
-	fs, repo, err := cloneRepository(fmt.Sprintf("https://github.com/%s", repoFullName), repoOwner, token)
+	fs, repo, err := cloneRepository("https://github.com/"+repoFullName, repoOwner, token)
 	if err != nil {
 		return nil, fmt.Errorf("failed to clone repository: %w", err)
 	}
