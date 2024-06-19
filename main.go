@@ -17,6 +17,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-git/go-billy/v5"
@@ -86,20 +87,22 @@ func initAction(ctx context.Context) (*action.FrizbeeAction, error) {
 
 	// Read the action settings from the environment and create the new frizbee replacers for actions and images
 	return &action.FrizbeeAction{
-		Client:            github.NewClient(tc),
-		Token:             token,
-		RepoOwner:         repoOwner,
-		RepoName:          strings.TrimPrefix(repoFullName, repoOwner+"/"),
-		ActionsPath:       os.Getenv("INPUT_ACTIONS"),
-		DockerfilesPath:   os.Getenv("INPUT_DOCKERFILES"),
-		KubernetesPath:    os.Getenv("INPUT_KUBERNETES"),
-		DockerComposePath: os.Getenv("INPUT_DOCKER_COMPOSE"),
-		OpenPR:            os.Getenv("INPUT_OPEN_PR") == "true",
-		FailOnUnpinned:    os.Getenv("INPUT_FAIL_ON_UNPINNED") == "true",
-		ActionsReplacer:   replacer.NewGitHubActionsReplacer(config.DefaultConfig()).WithGitHubClientFromToken(token),
-		ImagesReplacer:    replacer.NewContainerImagesReplacer(config.DefaultConfig()),
-		BFS:               fs,
-		Repo:              repo,
+		Client:    github.NewClient(tc),
+		Token:     token,
+		RepoOwner: repoOwner,
+		RepoName:  strings.TrimPrefix(repoFullName, repoOwner+"/"),
+
+		ActionsPath:        os.Getenv("INPUT_ACTIONS"),
+		DockerfilesPaths:   envToStrings("INPUT_DOCKERFILES"),
+		KubernetesPaths:    envToStrings("INPUT_KUBERNETES"),
+		DockerComposePaths: envToStrings("INPUT_DOCKER_COMPOSE"),
+
+		OpenPR:          os.Getenv("INPUT_OPEN_PR") == "true",
+		FailOnUnpinned:  os.Getenv("INPUT_FAIL_ON_UNPINNED") == "true",
+		ActionsReplacer: replacer.NewGitHubActionsReplacer(config.DefaultConfig()).WithGitHubClientFromToken(token),
+		ImagesReplacer:  replacer.NewContainerImagesReplacer(config.DefaultConfig()),
+		BFS:             fs,
+		Repo:            repo,
 	}, nil
 }
 
@@ -119,4 +122,19 @@ func cloneRepository(url, owner, accessToken string) (billy.Filesystem, *git.Rep
 		return nil, nil, err
 	}
 	return fs, repo, nil
+}
+
+func envToStrings(env string) []string {
+	var vals []string
+
+	if env == "" {
+		return []string{}
+	}
+
+	if err := json.Unmarshal([]byte(os.Getenv(env)), &vals); err != nil {
+		log.Printf("Error unmarshalling %s: %v", env, err)
+		return []string{}
+	}
+
+	return vals
 }
