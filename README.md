@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - uses: stacklok/frizbee-action@v0.0.1
+      - uses: stacklok/frizbee-action@v0.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.FRIZBEE_TOKEN }}
         with:
