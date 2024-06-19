@@ -85,6 +85,24 @@ func initAction(ctx context.Context) (*action.FrizbeeAction, error) {
 		return nil, fmt.Errorf("failed to clone repository: %w", err)
 	}
 
+	cfg := config.DefaultConfig()
+	excludeActions := os.Getenv("INPUT_ACTIONS_EXCLUDE")
+	if excludeActions != "" {
+		cfg.GHActions.Exclude = valToStrings(excludeActions)
+	}
+	excludeBranches := os.Getenv("INPUT_ACTIONS_EXCLUDE_BRANCHES")
+	if excludeBranches != "" {
+		cfg.GHActions.ExcludeBranches = valToStrings(excludeBranches)
+	}
+	excludeImages := os.Getenv("INPUT_IMAGES_EXCLUDE")
+	if excludeImages != "" {
+		cfg.Images.ExcludeImages = valToStrings(excludeImages)
+	}
+	excludeTags := os.Getenv("INPUT_IMAGES_EXCLUDE_TAGS")
+	if excludeTags != "" {
+		cfg.Images.ExcludeTags = valToStrings(excludeTags)
+	}
+
 	// Read the action settings from the environment and create the new frizbee replacers for actions and images
 	return &action.FrizbeeAction{
 		Client:    github.NewClient(tc),
@@ -99,8 +117,8 @@ func initAction(ctx context.Context) (*action.FrizbeeAction, error) {
 
 		OpenPR:          os.Getenv("INPUT_OPEN_PR") == "true",
 		FailOnUnpinned:  os.Getenv("INPUT_FAIL_ON_UNPINNED") == "true",
-		ActionsReplacer: replacer.NewGitHubActionsReplacer(config.DefaultConfig()).WithGitHubClientFromToken(token),
-		ImagesReplacer:  replacer.NewContainerImagesReplacer(config.DefaultConfig()),
+		ActionsReplacer: replacer.NewGitHubActionsReplacer(cfg).WithGitHubClientFromToken(token),
+		ImagesReplacer:  replacer.NewContainerImagesReplacer(cfg),
 		BFS:             fs,
 		Repo:            repo,
 	}, nil
@@ -125,14 +143,18 @@ func cloneRepository(url, owner, accessToken string) (billy.Filesystem, *git.Rep
 }
 
 func envToStrings(env string) []string {
+	return valToStrings(os.Getenv(env))
+}
+
+func valToStrings(val string) []string {
 	var vals []string
 
-	if env == "" {
+	if val == "" {
 		return []string{}
 	}
 
-	if err := json.Unmarshal([]byte(os.Getenv(env)), &vals); err != nil {
-		log.Printf("Error unmarshalling %s: %v", env, err)
+	if err := json.Unmarshal([]byte(val), &vals); err != nil {
+		log.Printf("Error unmarshalling %s: %v", val, err)
 		return []string{}
 	}
 

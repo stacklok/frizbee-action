@@ -50,6 +50,47 @@ jobs:
           fail_on_unpinned: true
 ```
 
+### Fine-tuning the action
+
+There are several options available to further exclude certain branches, images or actions from the check.
+
+#### Exclude actions
+The `actions_exclude` input allows you to exclude certain actions from the check. This is useful if you have actions that you don't want to pin.
+
+```yml
+with:
+  actions_exclude: ["slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml"]
+```
+
+Default: Unset. All actions are checked.
+
+#### Exclude action branches
+The `actions_exclude_branches` input allows you to exclude certain branches from the check. The reasoning being if you refer to an action by a branch in your workflow, you want to follow that branch.
+
+```yml
+with:
+  actions_exclude: ["main"]
+```
+Default: Set to `*` meaning that actions that are referred to by a branch are never pinned.
+
+#### Exclude container images
+The `images_exclude` input allows you to exclude certain container images from the check. This is useful if you have images that you don't want to pin.
+
+```yml
+with:
+  images_exclude: ["nginx"]
+```
+
+Default: `["scratch"]`
+
+#### Exclude container image tags
+The `images_exclude_tags` input allows you to exclude certain tags from the check. Some tags are not meant to be pinned, like `latest`.
+
+```yml
+with:
+  images_exclude_tags: ["latest"]
+```
+
 ### Create a token
 
 To enable the action to create a pull request (`open_pr: true`) , you will need to create a new token with the correct scope. This is needed because the default `GITHUB_TOKEN` doesn't have the necessary permissions (`workflows`).
