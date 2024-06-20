@@ -257,6 +257,7 @@ func (fa *FrizbeeAction) createPR(ctx context.Context) error {
 	defaultBranch := repository.GetDefaultBranch()
 
 	fa.bodyBuilder = &strings.Builder{}
+	fa.bodyBuilder.WriteString("## Frizbee: Pin images and actions to commit hash\n\n")
 	fa.bodyBuilder.WriteString("The following PR pins images and actions to their commit hash.\n\n")
 	fa.bodyBuilder.WriteString("Pinning images and actions to their commit hash ensures that the same " +
 		"version of the image or action is used every time the workflow runs. This is important for " +
@@ -264,7 +265,7 @@ func (fa *FrizbeeAction) createPR(ctx context.Context) error {
 	//nolint:lll
 	fa.bodyBuilder.WriteString("Pinning is a [security practice recommended by GitHub](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-third-party-actions).\n\n")
 	//nolint:lll
-	fa.bodyBuilder.WriteString("> 🌟 If you like this action, why not try out [Minder](https://github.com/stacklok/minder), the secure supply chain platform. It has vastly more protections and is also free (as in :beer:) to opensource projects.")
+	fa.bodyBuilder.WriteString("🥏 Posted on behalf of 🥏 [frizbee-action](https://github.com/stacklok/frizbee-action), by [Stacklok](https://stacklok.com).\n\n")
 
 	// Create a new PR
 	pr, _, err := fa.Client.PullRequests.Create(ctx, fa.RepoOwner, fa.RepoName, &github.NewPullRequest{
