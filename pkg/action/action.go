@@ -265,7 +265,7 @@ func (fa *FrizbeeAction) createPR(ctx context.Context) error {
 	//nolint:lll
 	fa.bodyBuilder.WriteString("Pinning is a [security practice recommended by GitHub](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-third-party-actions).\n\n")
 	//nolint:lll
-	fa.bodyBuilder.WriteString("🥏 Posted on behalf of 🥏 [frizbee-action](https://github.com/stacklok/frizbee-action), by [Stacklok](https://stacklok.com).\n\n")
+	fa.bodyBuilder.WriteString("🥏 Posted on behalf of [frizbee-action](https://github.com/stacklok/frizbee-action) 🥏, by [Stacklok](https://stacklok.com).\n\n")
 
 	// Create a new PR
 	pr, _, err := fa.Client.PullRequests.Create(ctx, fa.RepoOwner, fa.RepoName, &github.NewPullRequest{
