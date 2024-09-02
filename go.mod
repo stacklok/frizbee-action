@@ -7,7 +7,7 @@ require (
 	github.com/go-git/go-billy/v5 v5.5.0
 	github.com/go-git/go-git/v5 v5.12.0
 	github.com/google/go-github/v60 v60.0.0
-	github.com/stacklok/frizbee v0.1.1
+	github.com/stacklok/frizbee v0.1.2
 	golang.org/x/oauth2 v0.22.0
 )
 
