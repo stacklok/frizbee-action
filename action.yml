@@ -8,7 +8,7 @@ inputs:
   actions:
     description: "Actions to correct"
     required: false
-    default: ".github/workflows"
+    default: '[".github/workflows"]'
   dockerfiles:
     description: "Dockerfiles to correct"
     required: false
@@ -27,6 +27,10 @@ inputs:
     default: "true"
   fail_on_unpinned:
     description: "Fail if an unpinned action/image is found"
+    required: false
+    default: "false"
+  in_place:
+    description: "Update the files in place"
     required: false
     default: "false"
 runs:

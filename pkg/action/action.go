@@ -42,7 +42,7 @@ type FrizbeeAction struct {
 	RepoOwner string
 	RepoName  string
 
-	ActionsPath        string
+	ActionsPaths       []string
 	DockerfilesPaths   []string
 	KubernetesPaths    []string
 	DockerComposePaths []string
@@ -76,21 +76,23 @@ func (fa *FrizbeeAction) Run(ctx context.Context) error {
 
 // parseWorkflowActions parses the GitHub Actions workflow files
 func (fa *FrizbeeAction) parseWorkflowActions(ctx context.Context, out *replacer.ReplaceResult) error {
-	if fa.ActionsPath == "" {
-		log.Printf("Workflow path is empty")
-		return nil
-	}
+	for _, path := range fa.ActionsPaths {
+		if path == "" {
+			log.Printf("Workflow path is empty")
+			return nil
+		}
 
-	log.Printf("Parsing workflow files in %s...", fa.ActionsPath)
-	res, err := fa.ActionsReplacer.ParsePathInFS(ctx, fa.BFS, fa.ActionsPath)
-	if err != nil {
-		return fmt.Errorf("failed to parse workflow files in %s: %w", fa.ActionsPath, err)
-	}
+		log.Printf("Parsing workflow files in %s...", path)
+		res, err := fa.ActionsReplacer.ParsePathInFS(ctx, fa.BFS, path)
+		if err != nil {
+			return fmt.Errorf("failed to parse workflow files in %s: %w", path, err)
+		}
 
-	// Copy the processed and modified files to the output
-	out.Processed = mapset.NewSet(out.Processed...).Union(mapset.NewSet(res.Processed...)).ToSlice()
-	for key, value := range res.Modified {
-		out.Modified[key] = value
+		// Copy the processed and modified files to the output
+		out.Processed = mapset.NewSet(out.Processed...).Union(mapset.NewSet(res.Processed...)).ToSlice()
+		for key, value := range res.Modified {
+			out.Modified[key] = value
+		}
 	}
 	return nil
 }
