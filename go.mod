@@ -8,7 +8,7 @@ require (
 	github.com/go-git/go-git/v5 v5.12.0
 	github.com/google/go-github/v60 v60.0.0
 	github.com/stacklok/frizbee v0.1.2
-	golang.org/x/oauth2 v0.22.0
+	golang.org/x/oauth2 v0.23.0
 )
 
 require (
