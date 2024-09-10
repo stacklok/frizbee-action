@@ -77,11 +77,6 @@ func (fa *FrizbeeAction) Run(ctx context.Context) error {
 // parseWorkflowActions parses the GitHub Actions workflow files
 func (fa *FrizbeeAction) parseWorkflowActions(ctx context.Context, out *replacer.ReplaceResult) error {
 	for _, path := range fa.ActionsPaths {
-		if path == "" {
-			log.Printf("Workflow path is empty")
-			return nil
-		}
-
 		log.Printf("Parsing workflow files in %s...", path)
 		res, err := fa.ActionsReplacer.ParsePathInFS(ctx, fa.BFS, path)
 		if err != nil {
