@@ -34,7 +34,6 @@ import (
 	"github.com/google/go-github/v60/github"
 	"github.com/stacklok/frizbee/pkg/replacer"
 	"github.com/stacklok/frizbee/pkg/utils/config"
-	"golang.org/x/oauth2"
 
 	"github.com/stacklok/frizbee-action/pkg/action"
 )
@@ -63,7 +62,9 @@ func initAction(ctx context.Context) (*action.FrizbeeAction, error) {
 	var repo *git.Repository
 	var fs billy.Filesystem
 	var githubClient *github.Client
-	var token string
+
+	// Get the GitHub token from the environment
+	token := os.Getenv("GITHUB_TOKEN")
 
 	// Get the GITHUB_REPOSITORY_OWNER
 	repoOwner := os.Getenv("GITHUB_REPOSITORY_OWNER")
@@ -77,17 +78,14 @@ func initAction(ctx context.Context) (*action.FrizbeeAction, error) {
 		return nil, errors.New("GITHUB_REPOSITORY environment variable is not set")
 	}
 
-	if os.Getenv("INPUT_IN_PLACE") != "true" {
-		// Get the GitHub token from the environment
-		token = os.Getenv("GITHUB_TOKEN")
+	repoRoot := os.Getenv("INPUT_REPO_ROOT")
+	if repoRoot == "" {
 		if token == "" {
 			return nil, errors.New("GITHUB_TOKEN environment variable is not set")
 		}
 
 		// Create a new GitHub client
-		ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
-		tc := oauth2.NewClient(ctx, ts)
-		githubClient = github.NewClient(tc)
+		githubClient = github.NewClient(nil).WithAuthToken(token)
 
 		// Clone the repository
 		var err error
@@ -96,9 +94,9 @@ func initAction(ctx context.Context) (*action.FrizbeeAction, error) {
 			return nil, fmt.Errorf("failed to clone repository: %w", err)
 		}
 	} else {
-		fs = osfs.New(".")
+		fs = osfs.New(repoRoot)
 		var err error
-		repo, err = git.PlainOpen(".")
+		repo, err = git.PlainOpen(repoRoot)
 		if err != nil {
 			return nil, fmt.Errorf("failed to open repository: %w", err)
 		}
@@ -122,6 +120,22 @@ func initAction(ctx context.Context) (*action.FrizbeeAction, error) {
 		cfg.Images.ExcludeTags = valToStrings(excludeTags)
 	}
 
+	actions := os.Getenv("INPUT_ACTIONS")
+	actionsPaths := os.Getenv("INPUT_ACTIONS_PATHS")
+	if actions != "" && actionsPaths != "" {
+		return nil, errors.New("cannot set both INPUT_ACTIONS and INPUT_ACTIONS_PATHS")
+	} else if actions == "" && actionsPaths == "" {
+		// Default for actions was `.github/workflows``
+		actions = ".github/workflows"
+	}
+
+	var actionsPathList []string
+	if actions != "" {
+		actionsPathList = []string{actions}
+	} else {
+		actionsPathList = valToStrings(actionsPaths)
+	}
+
 	// Read the action settings from the environment and create the new frizbee replacers for actions and images
 	return &action.FrizbeeAction{
 		Client:    githubClient,
@@ -129,7 +143,7 @@ func initAction(ctx context.Context) (*action.FrizbeeAction, error) {
 		RepoOwner: repoOwner,
 		RepoName:  strings.TrimPrefix(repoFullName, repoOwner+"/"),
 
-		ActionsPaths:       envToStrings("INPUT_ACTIONS"),
+		ActionsPaths:       actionsPathList,
 		DockerfilesPaths:   envToStrings("INPUT_DOCKERFILES"),
 		KubernetesPaths:    envToStrings("INPUT_KUBERNETES"),
 		DockerComposePaths: envToStrings("INPUT_DOCKER_COMPOSE"),
