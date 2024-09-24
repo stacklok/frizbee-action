@@ -9,7 +9,7 @@ inputs:
     description: "Actions to correct"
     required: false
     default: ""
-  action-paths:
+  action_paths:
     description: "Paths to search for actions"
     required: false
     default: ""
@@ -33,7 +33,7 @@ inputs:
     description: "Fail if an unpinned action/image is found"
     required: false
     default: "false"
-  repo-root:
+  repo_root:
     description: "Operate on files in the specified filesystem location. If unspecified, check out files from the current repo."
     required: false
     default: ""
