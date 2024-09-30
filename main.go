@@ -120,20 +120,9 @@ func initAction(ctx context.Context) (*action.FrizbeeAction, error) {
 		cfg.Images.ExcludeTags = valToStrings(excludeTags)
 	}
 
-	actions := os.Getenv("INPUT_ACTIONS")
-	actionsPaths := os.Getenv("INPUT_ACTIONS_PATHS")
-	if actions != "" && actionsPaths != "" {
-		return nil, errors.New("cannot set both INPUT_ACTIONS and INPUT_ACTIONS_PATHS")
-	} else if actions == "" && actionsPaths == "" {
-		// Default for actions was `.github/workflows``
-		actions = ".github/workflows"
-	}
-
-	var actionsPathList []string
-	if actions != "" {
-		actionsPathList = []string{actions}
-	} else {
-		actionsPathList = valToStrings(actionsPaths)
+	actionsPathList, err := actionsPathList()
+	if err != nil {
+		return nil, err
 	}
 
 	// Read the action settings from the environment and create the new frizbee replacers for actions and images
@@ -192,4 +181,21 @@ func valToStrings(val string) []string {
 	}
 
 	return vals
+}
+
+func actionsPathList() ([]string, error) {
+	actions := os.Getenv("INPUT_ACTIONS")
+	actionsPaths := os.Getenv("INPUT_ACTIONS_PATHS")
+	if actions != "" && actionsPaths != "" {
+		return nil, errors.New("cannot set both INPUT_ACTIONS and INPUT_ACTIONS_PATHS")
+	} else if actions == "" && actionsPaths == "" {
+		// Default for actions was `.github/workflows``
+		actions = ".github/workflows"
+	}
+
+	if actions != "" {
+		return []string{actions}, nil
+	} else {
+		return valToStrings(actionsPaths), nil
+	}
 }
