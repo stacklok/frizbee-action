@@ -30,3 +30,18 @@ jobs:
           go-version: '1.22.1'
       - name: golangci-lint
         uses: golangci/golangci-lint-action@aaa42aa0628b4ae2578232a66b541047968fac86 # v3
+  docker_build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: test  # No point building images if tests don't pass
+    steps:
+      - name: Check out code
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db # v3
+      - name: Build Docker image
+        uses: docker/build-push-action@32945a339266b759abcbdc89316275140b0fc960 # v6
+        with:
+          context: .
+          push: false
+          tags: frizbee-action:latest
