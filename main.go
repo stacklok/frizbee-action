@@ -41,7 +41,7 @@ import (
 func main() {
 	ctx := context.Background()
 	// Initialize the frizbee action
-	frizbeeAction, err := initAction(ctx)
+	frizbeeAction, err := initAction()
 	if err != nil {
 		log.Fatalf("Error initializing action: %v", err)
 	}
@@ -58,7 +58,7 @@ func main() {
 }
 
 // initAction initializes the frizbee action - reads the environment variables, creates the GitHub client, etc.
-func initAction(ctx context.Context) (*action.FrizbeeAction, error) {
+func initAction() (*action.FrizbeeAction, error) {
 	var repo *git.Repository
 	var fs billy.Filesystem
 	var githubClient *github.Client
@@ -195,7 +195,6 @@ func actionsPathList() ([]string, error) {
 
 	if actions != "" {
 		return []string{actions}, nil
-	} else {
-		return valToStrings(actionsPaths), nil
 	}
+	return valToStrings(actionsPaths), nil
 }
