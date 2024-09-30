@@ -53,7 +53,6 @@ type FrizbeeAction struct {
 	ImagesReplacer  *replacer.Replacer
 	BFS             billy.Filesystem
 	Repo            *git.Repository
-	bodyBuilder     *strings.Builder
 }
 
 // Run runs the frizbee action
@@ -256,21 +255,21 @@ func (fa *FrizbeeAction) createPR(ctx context.Context) error {
 	}
 	defaultBranch := repository.GetDefaultBranch()
 
-	fa.bodyBuilder = &strings.Builder{}
-	fa.bodyBuilder.WriteString("## Frizbee: Pin images and actions to commit hash\n\n")
-	fa.bodyBuilder.WriteString("The following PR pins images and actions to their commit hash.\n\n")
-	fa.bodyBuilder.WriteString("Pinning images and actions to their commit hash ensures that the same " +
+	bodyBuilder := &strings.Builder{}
+	bodyBuilder.WriteString("## Frizbee: Pin images and actions to commit hash\n\n")
+	bodyBuilder.WriteString("The following PR pins images and actions to their commit hash.\n\n")
+	bodyBuilder.WriteString("Pinning images and actions to their commit hash ensures that the same " +
 		"version of the image or action is used every time the workflow runs. This is important for " +
 		"reproducibility and security.\n\n")
 	//nolint:lll
-	fa.bodyBuilder.WriteString("Pinning is a [security practice recommended by GitHub](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-third-party-actions).\n\n")
+	bodyBuilder.WriteString("Pinning is a [security practice recommended by GitHub](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-third-party-actions).\n\n")
 	//nolint:lll
-	fa.bodyBuilder.WriteString("🥏 Posted on behalf of [frizbee-action](https://github.com/stacklok/frizbee-action) 🥏, by [Stacklok](https://stacklok.com).\n\n")
+	bodyBuilder.WriteString("🥏 Posted on behalf of [frizbee-action](https://github.com/stacklok/frizbee-action) 🥏, by [Stacklok](https://stacklok.com).\n\n")
 
 	// Create a new PR
 	pr, _, err := fa.Client.PullRequests.Create(ctx, fa.RepoOwner, fa.RepoName, &github.NewPullRequest{
 		Title:               github.String("Frizbee: Pin images and actions to commit hash"),
-		Body:                github.String(fa.bodyBuilder.String()),
+		Body:                github.String(bodyBuilder.String()),
 		Head:                github.String(branchName),
 		Base:                github.String(defaultBranch),
 		MaintainerCanModify: github.Bool(true),
