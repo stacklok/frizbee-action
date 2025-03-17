@@ -2,8 +2,10 @@ module github.com/stacklok/frizbee-action
 
 go 1.22.5
 
+toolchain go1.24.1
+
 require (
-	github.com/deckarep/golang-set/v2 v2.7.0
+	github.com/deckarep/golang-set/v2 v2.8.0
 	github.com/go-git/go-billy/v5 v5.6.1
 	github.com/go-git/go-git/v5 v5.13.1
 	github.com/google/go-github/v60 v60.0.0
