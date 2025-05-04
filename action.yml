@@ -39,6 +39,6 @@ inputs:
     default: ""
 runs:
   using: "docker"
-  image: "Dockerfile"
+  image: "Dockerfile" # "docker://ghcr.io/stacklok/frizbee-action:v0.0.4" Uncomment this line once we confirm the publishing works correctly
   args:
     - ${{ inputs.recursive }}
