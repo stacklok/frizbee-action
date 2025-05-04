@@ -13,6 +13,9 @@ fail the CI if unpinned actions are found and much more.
 
 The action is based on the Frizbee tool, available both as a CLI and as a library - https://github.com/stacklok/frizbee
 
+> Note: This action uses a pre-built Docker image from GHCR (`ghcr.io/stacklok/frizbee-action`) to improve performance and reduce build time during workflow execution.
+> The image is automatically built and published when a new release is created. Upon each release, the image reference in action.yml should be updated to the latest stable version.
+
 ## Table of Contents
 
 - [Usage](#usage)
