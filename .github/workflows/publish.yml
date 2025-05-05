@@ -34,18 +34,15 @@ jobs:
       - name: Compute version number
         id: version-string
         run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            # For main branch, use semver with -dev suffix
-            echo "tag=0.0.1-dev.$GITHUB_RUN_NUMBER+$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
-          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            # For tags, use the tag as is (assuming it's semver)
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            # For tags, use the tag as is
             TAG="${{ github.ref_name }}"
-            echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           else
-            # For other branches, use branch name and run number
-            BRANCH="${{ github.ref_name }}"
-            echo "tag=0.0.1-$BRANCH.$GITHUB_RUN_NUMBER+$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+            # Fallback to using the input tag
+            TAG="${{ github.event.inputs.tag }}"
           fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Using tag: $TAG"
 
       - name: Log in to the Container registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
