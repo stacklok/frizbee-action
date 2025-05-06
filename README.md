@@ -120,13 +120,15 @@ Head to the repository where you are using the action, then `Settings` -> `Secre
 Name the secret `FRIZBEE_TOKEN` and paste the token you created in the previous
 step and select `Add secret`.
 
-#### I don't have time for that
+#### Minder
 
-If you prefer to automate all of this, we recommend trying out [Minder cloud](https://cloud.stacklok.com), a free for Open Source SaaS solution built on the open source project Minder. This
-way you can easily automate the process of pinning your actions and container
-images. You can also do a lot more than that, like monitoring your dependencies,
-scanning your code for vulnerabilities, and securing configuring your
-repositories and GitHub Actions.
+Frizbee is also a feature of the [Minder](https://github.com/mindersec/minder) Open Source project.
+With Minder, you can also easily enable the automation of pinning your actions
+and container images. You can also do a lot more, such as monitoring your
+dependencies, scanning your code for vulnerabilities, and securing configuring
+your repositories and GitHub Actions.
+
+If you prefer to automate all of this via a hosted service, we recommend trying out the Minder cloud from [Custcodian](https://custcodian.dev/).
 
 ## Configuration
 
@@ -159,20 +161,17 @@ The Frizbee Action can be configured through the following inputs:
     default: "false"
 ```
 
+## Release Process
+
+To release a new version of the Frizbee Action, follow these steps:
+1. Update the version in the `action.yml` file with the new version number you're about to release, i.e. `v0.0.3`.
+2. Cut a new release by creating a release tagged with the new version number you just set in the `action.yml` file. For example, if you updated the version to `v0.0.3`, create a new release with the tag `v0.0.3`.
+3. Once the release is created, the GitHub Actions workflow will automatically build the Docker image and push it to the GitHub Container Registry (GHCR).
+
 ## Contributing
 
 We welcome contributions to Frizbee Action. Please see our [Contributing](./CONTRIBUTING.md) guide for more information.
 
-## Minder
-
-Frizbee is also a feature of the [Minder](https://github.com/stacklok/minder) Open Source project. 
-With Minder, you can also easily enable the automation of pinning your actions
-and container images. You can also do a lot more, such as monitoring your
-dependencies, scanning your code for vulnerabilities, and securing configuring
-your repositories and GitHub Actions.
-
-Stacklok hosts a free (forever to open source projects) SaaS service available at [Minder Cloud](https://cloud.stacklok.com). 
-
 ## License
 
-Frizbee is licensed under the [Apache 2.0 License](./LICENSE).
+Frizbee Action is licensed under the [Apache 2.0 License](./LICENSE).
