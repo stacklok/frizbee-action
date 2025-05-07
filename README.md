@@ -41,7 +41,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - uses: stacklok/frizbee-action@v0.0.2
+      - uses: stacklok/frizbee-action@v0.0.5
         env:
           GITHUB_TOKEN: ${{ secrets.FRIZBEE_TOKEN }}
         with:
@@ -164,8 +164,8 @@ The Frizbee Action can be configured through the following inputs:
 ## Release Process
 
 To release a new version of the Frizbee Action, follow these steps:
-1. Update the version in the `action.yml` file with the new version number you're about to release, i.e. `v0.0.3`.
-2. Cut a new release by creating a release tagged with the new version number you just set in the `action.yml` file. For example, if you updated the version to `v0.0.3`, create a new release with the tag `v0.0.3`.
+1. Update the version in the `action.yml` file with the new version number you're about to release, i.e. `v0.0.5`.
+2. Cut a new release by creating a release tagged with the new version number you just set in the `action.yml` file. For example, if you updated the version to `v0.0.5`, create a new release with the tag `v0.0.5`.
 3. Once the release is created, the GitHub Actions workflow will automatically build the Docker image and push it to the GitHub Container Registry (GHCR).
 
 ## Contributing
