@@ -39,6 +39,6 @@ inputs:
     default: ""
 runs:
   using: "docker"
-  image: "docker://ghcr.io/stacklok/frizbee-action:v0.0.4" # Keep this updated with the latest version of the action image
+  image: "docker://ghcr.io/stacklok/frizbee-action:v0.0.5" # Keep this updated with the latest version of the action image
   args:
     - ${{ inputs.recursive }}
