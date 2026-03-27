@@ -176,7 +176,7 @@ func valToStrings(val string) []string {
 	}
 
 	if err := json.Unmarshal([]byte(val), &vals); err != nil {
-		log.Printf("Error unmarshalling %q: %v", val, err)
+		log.Printf("Error unmarshalling input: %v", err)
 		return []string{}
 	}
 
