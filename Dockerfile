@@ -1,4 +1,4 @@
-FROM index.docker.io/library/golang:1.23.7-alpine@sha256:e438c135c348bd7677fde18d1576c2f57f265d5dfa1a6b26fca975d4aa40b3bb
+FROM index.docker.io/library/golang:1.25.0-alpine@sha256:f18a072054848d87a8077455f0ac8a25886f2397f88bfdd222d6fafbb5bba440
 
 COPY . /home/src
 WORKDIR /home/src
